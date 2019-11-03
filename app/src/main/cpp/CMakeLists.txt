@@ -14,7 +14,7 @@ set(distribution_DIR ${CMAKE_SOURCE_DIR}/../../../../android_libs)
 # 库名称：avcodec（不需要包含前缀lib）
 # 库类型：SHARED，表示动态库，后缀为.so（如果是STATIC，则表示静态库，后缀为.a）
 # IMPORTED表明是外部引入的库
-add_library( avcodec
+#[[add_library( avcodec
         SHARED
         IMPORTED)
 # 设置目标属性
@@ -60,7 +60,7 @@ set_target_properties( swscale
         ${distribution_DIR}/${ANDROID_ABI}/lib/libswscale.so)
 
 # 引入头文件
-include_directories(${distribution_DIR}/${ANDROID_ABI}/include)
+include_directories(${distribution_DIR}/${ANDROID_ABI}/include)]]
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -95,12 +95,12 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
         native-lib
-        avcodec
+        #[[avcodec
         avfilter
         avformat
         avutil
         swresample
-        swscale
+        swscale]]
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib} )

@@ -24,12 +24,12 @@ class MainActivity : AppCompatActivity() {
 
         // Used to load the 'native-lib' library on application startup.
         init {
-            System.loadLibrary("avcodec")
-            System.loadLibrary("avfilter")
-            System.loadLibrary("avformat")
             System.loadLibrary("avutil")
             System.loadLibrary("swresample")
             System.loadLibrary("swscale")
+            System.loadLibrary("avformat")
+            System.loadLibrary("avcodec")
+            System.loadLibrary("avfilter")
             System.loadLibrary("native-lib")
         }
     }
