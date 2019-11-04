@@ -12,6 +12,10 @@ class MainActivity : AppCompatActivity() {
 
         // Example of a call to a native method
         sample_text.text = stringFromJNI()
+        protocol.setOnClickListener { sample_text.text = urlprotocolinfo() }
+        format.setOnClickListener{ sample_text.text = avformatinfo() }
+        codec.setOnClickListener { sample_text.text = avcodecinfo() }
+        filter.setOnClickListener { sample_text.text = avfilterinfo() }
     }
 
     /**
@@ -19,6 +23,10 @@ class MainActivity : AppCompatActivity() {
      * which is packaged with this application.
      */
     external fun stringFromJNI(): String
+    external fun urlprotocolinfo(): String
+    external fun avformatinfo(): String
+    external fun avcodecinfo(): String
+    external fun avfilterinfo(): String
 
     companion object {
 
