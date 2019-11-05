@@ -1,121 +1,23 @@
 #!/bin/bash
 
 OUTPUTPATH=android_libs
-NDK=/Users/wuhan/Library/Android/sdk/ndk
-TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64
-API=21
-
-MIN_PLATFORM=${NDK}/platforms/android-${API}
-ADDI_LDFLAGS="-Wl,-rpath-link=$MIN_PLATFORM/arch-arm/usr/lib -L$MIN_PLATFORM/arch-arm/usr/lib -nostdlib"
-
-function build_android
-{
-echo "Compiling FFmpeg for $CPU"
-./configure \
-    --prefix=${PREFIX} \
-    --disable-neon \
-    --disable-hwaccels \
-    --disable-gpl \
-    --disable-postproc \
-    --enable-shared \
-    --enable-jni \
-    --disable-mediacodec \
-    --disable-decoder=h264_mediacodec \
-    --disable-static \
-    --disable-doc \
-    --disable-ffmpeg \
-    --disable-ffplay \
-    --disable-ffprobe \
-    --disable-avdevice \
-    --disable-doc \
-    --disable-symver \
-    --cross-prefix=${CROSS_PREFIX} \
-    --target-os=android \
-    --arch=${ARCH} \
-    --cpu=${CPU} \
-    --cc=${CC} \
-    --cxx=${CXX} \
-    --enable-cross-compile \
-    --sysroot=${SYSROOT} \
-    --extra-cflags="-Os -fpic ${OPTIMIZE_CFLAGS}" \
-    --extra-ldflags="${ADDI_LDFLAGS}" \
-    ${ADDITIONAL_CONFIGURE_FLAG}
-make clean
-make
-make install
-echo "The Compilation of FFmpeg for ${CPU} is completed"
-}
-
-#armv8-a
-ARCH=arm64
-CPU=armv8-a
-CC=${TOOLCHAIN}/bin/aarch64-linux-android${API}-clang
-CXX=${TOOLCHAIN}/bin/aarch64-linux-android${API}-clang++
-SYSROOT=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/sysroot
-CROSS_PREFIX=${TOOLCHAIN}/bin/aarch64-linux-android-
-PREFIX=${OUTPUTPATH}/${CPU}
-OPTIMIZE_CFLAGS="-march=${CPU}"
-build_android
-
-#armv7-a
-ARCH=arm
-CPU=armv7-a
-CC=${TOOLCHAIN}/bin/armv7a-linux-androideabi${API}-clang
-CXX=${TOOLCHAIN}/bin/armv7a-linux-androideabi${API}-clang++
-SYSROOT=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/sysroot
-CROSS_PREFIX=${TOOLCHAIN}/bin/arm-linux-androideabi-
-PREFIX=${OUTPUTPATH}/${CPU}
-OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=vfp -marm -march=${CPU}"
-build_android
-
-#x86
-ARCH=x86
-CPU=x86
-CC=${TOOLCHAIN}/bin/i686-linux-android${API}-clang
-CXX=${TOOLCHAIN}/bin/i686-linux-android${API}-clang++
-SYSROOT=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/sysroot
-CROSS_PREFIX=${TOOLCHAIN}/bin/i686-linux-android-
-PREFIX=${OUTPUTPATH}/${CPU}
-OPTIMIZE_CFLAGS="-march=i686 -mtune=intel -mssse3 -mfpmath=sse -m32"
-build_android
-
-#x86_64
-ARCH=x86_64
-CPU=x86-64
-CC=${TOOLCHAIN}/bin/x86_64-linux-android${API}-clang
-CXX=${TOOLCHAIN}/bin/x86_64-linux-android${API}-clang++
-SYSROOT=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/sysroot
-CROSS_PREFIX=${TOOLCHAIN}/bin/x86_64-linux-android-
-PREFIX=${OUTPUTPATH}/${CPU}
-OPTIMIZE_CFLAGS="-march=${CPU} -msse4.2 -mpopcnt -m64 -mtune=intel"
-build_android
-
-
 NDK=/Users/wuhan/Library/Android/sdk/ndk # NDK目录，自行修改
 API=21
-# arm aarch64 i686 x86_64  进行修改
-ARCH=aarch64
-# armv7a aarch64 i686 x86_64  进行修改
-PLATFORM=aarch64
-TARGET=$PLATFORM-linux-android
-TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin # 这里找到对应得文件
-SYSROOT=$NDK/platforms/android-${API}/arch-arm64
-PREFIX=${OUTPUTPATH}/${ARCH}
 
 CFLAG="-D__ANDROID_API__=$API -U_FILE_OFFSET_BITS -DBIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD -Os -fPIC -DANDROID -D__thumb__ -mthumb -Wfatal-errors -Wno-deprecated -mfloat-abi=softfp -marm"
 
-build_one()
+function build_one()
 {
-echo "Compiling FFmpeg for $ARCH"
+echo "Compiling FFmpeg for ${CPU}"
 ./configure \
 --ln_s="cp -rf" \
---prefix=$PREFIX \
---cc=$TOOLCHAIN/$TARGET$API-clang \
---cxx=$TOOLCHAIN/$TARGET$API-clang++ \
---ld=$TOOLCHAIN/$TARGET$API-clang \
+--prefix=${PREFIX} \
+--cc=${TOOLCHAIN}/${TARGET}${API}-clang \
+--cxx=${TOOLCHAIN}/${TARGET}${API}-clang++ \
+--ld=${TOOLCHAIN}/${TARGET}${API}-clang \
 --target-os=android \
---arch=$ARCH \
---cross-prefix=$TOOLCHAIN/$ARCH-linux-android- \
+--arch=${ARCH} \
+--cross-prefix=${CROSS_PREFIX} \
 --disable-asm \
 --enable-cross-compile \
 --enable-shared \
@@ -148,7 +50,41 @@ echo "Compiling FFmpeg for $ARCH"
 make clean
 make
 make install
-echo "The Compilation of FFmpeg for ${ARCH} is completed"
+echo "The Compilation of FFmpeg for ${CPU} is completed"
 }
 
+# arm64-v8a
+ARCH=aarch64
+CPU=arm64-v8a
+TARGET=${ARCH}-linux-android
+TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/bin # 这里找到对应得文件
+PREFIX=${OUTPUTPATH}/${CPU}
+CROSS_PREFIX=${TOOLCHAIN}/${ARCH}-linux-android-
+build_one
+
+# armeabi-v7a
+ARCH=armv7a
+CPU=armeabi-v7a
+TARGET=${ARCH}-linux-androideabi
+TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/bin # 这里找到对应得文件
+PREFIX=${OUTPUTPATH}/${CPU}
+CROSS_PREFIX=${TOOLCHAIN}/arm-linux-androideabi-
+build_one
+
+# x86
+ARCH=i686
+CPU=x86
+TARGET=${ARCH}-linux-android
+TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/bin # 这里找到对应得文件
+PREFIX=${OUTPUTPATH}/${CPU}
+CROSS_PREFIX=${TOOLCHAIN}/${ARCH}-linux-android-
+build_one
+
+# x86_64
+ARCH=x86_64
+CPU=x86_64
+TARGET=${ARCH}-linux-android
+TOOLCHAIN=${NDK}/toolchains/llvm/prebuilt/darwin-x86_64/bin # 这里找到对应得文件
+PREFIX=${OUTPUTPATH}/${CPU}
+CROSS_PREFIX=${TOOLCHAIN}/${ARCH}-linux-android-
 build_one
