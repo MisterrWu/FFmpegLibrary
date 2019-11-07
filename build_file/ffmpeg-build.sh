@@ -33,12 +33,13 @@ echo "Compiling FFmpeg for ${CPU}"
 --enable-gpl --enable-nonfree --enable-version3 --disable-iconv \
 --enable-jni \
 --enable-mediacodec \
---disable-decoders --enable-decoder=vp9 --enable-decoder=h264 --enable-decoder=mpeg4 --enable-decoder=aac \
---disable-encoders --enable-encoder=h264_v4l2m2m \
---disable-demuxers --enable-demuxer=rtsp --enable-demuxer=rtp --enable-demuxer=flv --enable-demuxer=h264 \
---disable-muxers --enable-muxer=rtsp --enable-muxer=rtp --enable-muxer=flv --enable-muxer=h264 \
---disable-parsers --enable-parser=mpeg4video --enable-parser=aac --enable-parser=h264 --enable-parser=vp9 \
---disable-protocols --enable-protocol=rtmp --enable-protocol=rtp --enable-protocol=tcp --enable-protocol=udp \
+--enable-network \
+--disable-decoders --enable-decoder=hevc --enable-decoder=h264 --enable-decoder=g711 --enable-decoder=aac \
+--disable-encoders --enable-encoder=hevc --enable-encoder=h264 --enable-encoder=g711 --enable-encoder=aac \
+--disable-demuxers --enable-demuxer=rtsp --enable-demuxer=rtp --enable-demuxer=h264 --enable-demuxer=hevc \
+--disable-muxers --enable-muxer=hevc --enable-muxer=h264 --enable-muxer=g711 --enable-muxer=aac \
+--disable-parsers --enable-parser=aac --enable-parser=g711 --enable-parser=h264 --enable-parser=hevc --enable-hwaccel=hevc_dxva2 --enable-hwaccel=h264_dxva2 \
+--disable-protocols --enable-protocol=rtmp --enable-protocol=rtp --enable-protocol=tcp --enable-protocol=udp --enable-protocol=file  \
 --disable-bsfs \
 --disable-indevs --enable-indev=v4l2 \
 --disable-outdevs \
